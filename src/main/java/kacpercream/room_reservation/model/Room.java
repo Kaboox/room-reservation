@@ -1,4 +1,4 @@
-package kacpercream.room_reservation;
+package kacpercream.room_reservation.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
