@@ -15,7 +15,7 @@ function ReservationForm() {
     }
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // blokuje przeladowanie
+        e.preventDefault();
         setStatus('Wysylanie...');
 
         try {

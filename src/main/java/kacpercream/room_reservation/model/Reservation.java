@@ -2,6 +2,7 @@ package kacpercream.room_reservation.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,9 +12,9 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String reserverName;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private String clientName;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     @ManyToOne
     @JoinColumn(name = "room_id")
@@ -29,28 +30,28 @@ public class Reservation {
         this.id = id;
     }
 
-    public String getReserverName() {
-        return reserverName;
+    public String getCLientName() {
+        return clientName;
     }
 
-    public void setReserverName(String reserverName) {
-        this.reserverName = reserverName;
+    public void setClientName(String reserverName) {
+        this.clientName = reserverName;
     }
 
-    public LocalDateTime getStartTime() {
-        return startTime;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
-    public LocalDateTime getEndTime() {
-        return endTime;
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
     public Room getRoom() {

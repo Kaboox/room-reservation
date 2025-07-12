@@ -13,7 +13,7 @@ public class Room {
     private Long id;
     private String name;
     private int capacity;
-    private String location;
+    //private String location;
 
     // gettery settery
     public Long getId() {
@@ -40,11 +40,11 @@ public class Room {
         this.capacity = capacity;
     }
 
-    public String getLocation() {
-        return location;
-    }
+    //public String getLocation() {
+    //    return location;
+    //}
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
+    //public void setLocation(String location) {
+   //     this.location = location;
+    //}
 }
