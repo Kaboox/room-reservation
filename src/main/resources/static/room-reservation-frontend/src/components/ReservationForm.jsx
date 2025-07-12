@@ -28,9 +28,7 @@ function ReservationForm() {
             });
 
             if (!res.ok) throw new Error('Błąd zapisu do bazy danych');
-            console.log(formData) // dziala
             const data = await res.json();
-            console.log(data) // nie dziala
             setStatus('Zarezerwowano pomyślnie!');
             console.log('Opodiwedź z backendu:', data);
         } catch (error) {

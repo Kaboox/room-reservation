@@ -43,6 +43,12 @@ public class ReservationController {
         reservation.setEndDate(dto.getEndDate());
         reservation.setClientName(dto.getClientName());
 
+        if(dto.getEndDate().isBefore(dto.getStartDate())) {
+            return ResponseEntity.badRequest().body("Data zakończenia musi być po dacie rozpoczęcia");
+        }
+
+        //boolean overlaps = reservationRepository.
+
         reservationRepository.save(reservation);
         return ResponseEntity.ok("Rezerwacja zapisana pomyślnie");
     }
