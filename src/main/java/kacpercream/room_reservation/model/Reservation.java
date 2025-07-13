@@ -61,4 +61,16 @@ public class Reservation {
     public void setRoom(Room room) {
         this.room = room;
     }
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "id=" + id +
+                ", clientName='" + clientName + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", room=" + (room != null ? room.getId() + " - " + room.getName() : "null") +
+                '}';
+    }
+
 }

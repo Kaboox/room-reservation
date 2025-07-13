@@ -29,7 +29,6 @@ public class ReservationController {
 
     @PostMapping
     public ResponseEntity<?> createReservation(@RequestBody ReservationDto dto) {
-        // time check
         Optional<Room> optionalRoom = roomRepository.findById(dto.getRoomId());
         if (optionalRoom.isEmpty()) {
             return ResponseEntity.badRequest().body("Pokój o ID " + dto.getRoomId() + " nie istnieje");
@@ -47,9 +46,19 @@ public class ReservationController {
             return ResponseEntity.badRequest().body("Data zakończenia musi być po dacie rozpoczęcia");
         }
 
-        //boolean overlaps = reservationRepository.
+        // check if the room is available - collision
+        List<Reservation> reservations = reservationRepository.findByRoom_Id(reservation.getRoom().getId());
+        for (Reservation reservation_in_database: reservations) {
+            // check availability
+            if (!(reservation.getEndDate().isBefore(reservation_in_database.getStartDate())) && !(reservation.getStartDate().isAfter(reservation_in_database.getEndDate()))) {
+                return ResponseEntity.badRequest().body("Pokój jest już zarezerwowany w tym terminie: " +
+                        reservation_in_database.getStartDate() + " - " + reservation_in_database.getEndDate());
 
+            }
+        }
+        
         reservationRepository.save(reservation);
         return ResponseEntity.ok("Rezerwacja zapisana pomyślnie");
     }
+
 }
