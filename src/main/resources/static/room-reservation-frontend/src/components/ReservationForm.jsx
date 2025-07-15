@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 function ReservationForm() {
 
     const [formData, setFormData] = useState({
@@ -9,6 +9,14 @@ function ReservationForm() {
     });
 
     const [status, setStatus] = useState('');
+    const [rooms, setRooms] = useState([]);
+
+    useEffect(() => {
+        fetch('http://localhost:8080/rooms')
+            .then(res => res.json())
+            .then(data => setRooms(data))
+            .catch(err => console.log('Błąd pobierania pokoi:', err))
+    }, [])
 
     const handleChange = (e) => {
         setFormData({...formData, [e.target.name]: e.target.value})
@@ -43,14 +51,28 @@ function ReservationForm() {
         <div>
             <h2>Make a reservation</h2>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <input type="text"
+                {/* <input type="select"
                     name="roomId"
                     placeholder="ID pokoju" 
                     value={formData.roomId}
                     onChange={handleChange}
                     className="p-2 border rounded" 
                     required    
-                />
+                /> */}
+                <select 
+                    name="roomId"
+                    value={formData.roomId}
+                    onChange={handleChange}
+                    className="p-2 border rounded"
+                    required
+                >
+                <option value="" disabled>-- Wybierz pokój --</option>
+                {rooms.map(room => (
+                    <option key={room.id} value={room.id}>
+                        {room.name} (dla {room.capacity} osób)
+                    </option>
+                ))}
+                </select>
                 <input
                     type="date"
                     name="startDate"

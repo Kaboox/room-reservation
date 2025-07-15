@@ -61,4 +61,13 @@ public class ReservationController {
         return ResponseEntity.ok("Rezerwacja zapisana pomyślnie");
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteReservation(@PathVariable Long id) {
+        if (!reservationRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        reservationRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
