@@ -12,7 +12,10 @@ function ReservationList ({isAdmin}) {
 
     const deleteReservation = (id) => {
         fetch(`http://localhost:8080/reservations/${id}`, {
-            method: "DELETE"
+            method: "DELETE",
+            headers: {
+                'X-Role': localStorage.getItem('role') || 'USER'
+            }
         })
         .then(() => setReservations(reservations.filter(r => r.id !== id)))
         .catch(err => console.log*('Błąd usuwania:', err))

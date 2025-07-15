@@ -6,6 +6,7 @@ import kacpercream.room_reservation.model.Room;
 import kacpercream.room_reservation.repository.ReservationRepository;
 import kacpercream.room_reservation.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,7 +63,15 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteReservation(@PathVariable Long id) {
+    public ResponseEntity<?> deleteReservation(@PathVariable Long id, @RequestHeader("X-Role") String role) {
+
+        if (!"ADMIN".equals(role)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Brak uprawnień do usuwania");
+        }
+
+
+
         if (!reservationRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }

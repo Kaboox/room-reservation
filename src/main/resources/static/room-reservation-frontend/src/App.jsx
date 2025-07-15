@@ -31,7 +31,7 @@ function App() {
       <div>
        <RoomList />
        <ReservationForm />
-       <ReservationList isAdmin={role}></ReservationList>
+       <ReservationList isAdmin={role==="ADMIN"}></ReservationList>
       </div>
     </div>
   )
