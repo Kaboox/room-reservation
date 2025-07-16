@@ -3,6 +3,7 @@ import ReservationForm from "./components/ReservationForm"
 import ReservationList from "./components/ReservationList"
 import { useState } from "react"
 import Login from "./components/Login"
+import AdminRoomForm from "./components/AdminRoomForm"
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
        <ReservationForm />
        <ReservationList isAdmin={role==="ADMIN"}></ReservationList>
       </div>
+      {role==="ADMIN" && <AdminRoomForm></AdminRoomForm>}
     </div>
   )
 

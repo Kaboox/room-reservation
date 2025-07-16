@@ -20,7 +20,7 @@ public class Room {
         return id;
     }
 
-    public void setId() {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -36,9 +36,9 @@ function ReservationForm() {
             });
 
             if (!res.ok) throw new Error('Błąd zapisu do bazy danych');
-            const data = await res.json();
+            //const data = await res.json();
             setStatus('Zarezerwowano pomyślnie!');
-            console.log('Opodiwedź z backendu:', data);
+            //console.log('Opodiwedź z backendu:', data);
         } catch (error) {
             setStatus('Błąd rezerwacji');
             console.log(error);
@@ -51,14 +51,6 @@ function ReservationForm() {
         <div>
             <h2>Make a reservation</h2>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                {/* <input type="select"
-                    name="roomId"
-                    placeholder="ID pokoju" 
-                    value={formData.roomId}
-                    onChange={handleChange}
-                    className="p-2 border rounded" 
-                    required    
-                /> */}
                 <select 
                     name="roomId"
                     value={formData.roomId}
