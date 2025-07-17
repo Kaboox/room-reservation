@@ -12,7 +12,18 @@ function RoomListAdmin() {
     .catch((err) => {
         console.log('Błąd podczas pobierania pokoi:', err)
     });
-}, []);
+    }, []);
+
+    const deleteRoom = (id) => {
+        fetch(`http://localhost:8080/rooms/${id}`, {
+            method: "DELETE",
+            headers: {
+                'X-Role': localStorage.getItem('role') || 'USER'
+            }
+        })
+        .then(() => setRooms(rooms.filter(r => r.id != id)))
+        .catch(err => console.log*('Błąd usuwania:', err))
+    }
 
 
     return (
@@ -22,7 +33,7 @@ function RoomListAdmin() {
                 {rooms.map((room) => (
                     <li key={room.id} className="flex gap-2 border p-2 mb-2 rounded">
                         <span>{room.name} - {room.capacity} osób</span>
-                        <button  className="bg-red-500 text-white px-2 py-1 rounded">Usuń</button>
+                        <button onClick={() => deleteRoom(room.id)}  className="bg-red-500 text-white px-2 py-1 rounded">Usuń</button>
                     </li>
                 ))}
             </ul>
