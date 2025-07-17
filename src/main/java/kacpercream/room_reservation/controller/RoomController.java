@@ -36,4 +36,19 @@ public class RoomController {
         Room savedRoom = roomRepository.save(room);
         return ResponseEntity.ok(savedRoom);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteRoom(@PathVariable Long id, @RequestHeader("X-Role") String role) {
+
+        if (!"ADMIN".equals(role)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Brak uprawnień");
+        }
+
+        if (!roomRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        roomRepository.deleteById(id);
+        return ResponseEntity.ok("Usunięto pokój");
+    }
 }
