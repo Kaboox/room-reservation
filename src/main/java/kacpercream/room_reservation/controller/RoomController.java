@@ -51,4 +51,27 @@ public class RoomController {
         roomRepository.deleteById(id);
         return ResponseEntity.ok("Usunięto pokój");
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateRoom(@PathVariable Long id, @RequestHeader("X-Role") String role, @RequestBody Room updatedRoom) {
+        if (!"ADMIN".equals(role)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Brak uprawnień");
+        }
+
+
+        return roomRepository.findById(id)
+                .map(existingRoom -> {
+                    if (updatedRoom.getName() != null && !updatedRoom.getName().isBlank()) {
+                        existingRoom.setName(updatedRoom.getName());
+                    }
+
+                    if (updatedRoom.getCapacity() > 0) {
+                        existingRoom.setCapacity(updatedRoom.getCapacity());
+                    }
+
+                    roomRepository.save(existingRoom);
+                    return ResponseEntity.ok("Pokój zaktualizowany");
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }
