@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function RoomListAdmin() {
 
@@ -9,15 +9,15 @@ function RoomListAdmin() {
     })
     const [editingRoom, setEditingRoom] = useState(null)
 
-    useEffect(() => {
-        fetch('http://localhost:8080/rooms')
+    const fetchRooms = () => {
+    fetch('http://localhost:8080/rooms')
             .then((res) => res.json())
             .then((data) => setRooms(data)
     )
     .catch((err) => {
         console.log('Błąd podczas pobierania pokoi:', err)
     });
-    }, []);
+    }
 
     const handleChange = (e) => {
         console.log(e.target.name)
@@ -45,6 +45,10 @@ function RoomListAdmin() {
     }
 
     const submitEditRoom = async () => {
+        if (!editedRoom.name.trim() || !editedRoom.capacity) {
+            alert("Wszystkie pola muszą być wypełnione.");
+            return;
+        }
         try {
             const res = await fetch(`http://localhost:8080/rooms/${editingRoom}`, {
             method: "PUT",
@@ -60,7 +64,9 @@ function RoomListAdmin() {
         } catch (err) {
             console.log(err);
         }
+        fetchRooms()
     }
+    fetchRooms()
 
 
     return (
@@ -84,6 +90,7 @@ function RoomListAdmin() {
                             onChange={handleChange}
                             className="w-full mb-2 p-2 border rounded"
                             placeholder="Pojemność"
+                            min={1}
                         />
                         <div className="flex justify-end gap-2">
                             <button onClick={() => submitEditRoom()} className="bg-blue-500 text-white px-4 py-2 rounded">Zapisz</button>
@@ -107,5 +114,6 @@ function RoomListAdmin() {
         </div>
     )
 }
+
 
 export default RoomListAdmin
