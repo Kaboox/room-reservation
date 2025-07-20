@@ -5,6 +5,7 @@ import RoomListAdmin from "./components/RoomListAdmin"
 import { useState } from "react"
 import Login from "./components/Login"
 import AdminRoomForm from "./components/AdminRoomForm"
+import { RoomsProvider } from "./contexts/RoomsContext"
 
 
 function App() {
@@ -25,7 +26,8 @@ function App() {
   }
   
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <RoomsProvider>
+      <div className="min-h-screen bg-gray-100 p-6">
 
       <h1 className="text-3xl font-bold text-center mb-8">Room Reservation SyStem</h1>
       <button onClick={handleLogout} className="mb-4 bg-red-500 text-white px-4 py-2 rounded">
@@ -39,6 +41,7 @@ function App() {
       {role === "ADMIN" && <AdminRoomForm></AdminRoomForm>}
       {role === "ADMIN" && <RoomListAdmin />}
     </div>
+    </RoomsProvider>
   )
 
 }

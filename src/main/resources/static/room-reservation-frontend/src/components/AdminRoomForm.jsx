@@ -55,7 +55,7 @@ function AdminRoomForm () {
                     required 
                 />
                 <input 
-                    type="text"
+                    type="number"
                     name="capacity"
                     value={roomData.capacity}
                     placeholder="Ilość miejsc"

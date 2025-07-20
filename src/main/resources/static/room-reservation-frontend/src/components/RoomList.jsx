@@ -1,18 +1,10 @@
-import { useEffect, useState } from "react";
+import { useRooms } from "../contexts/RoomsContext";
 
 function RoomList() {
 
-    const [rooms, setRooms] = useState([]);
+    const {rooms} = useRooms()
 
-    useEffect(() => {
-        fetch('http://localhost:8080/rooms')
-            .then((res) => res.json())
-            .then((data) => setRooms(data)
-    )
-    .catch((err) => {
-        console.log('Błąd podczas pobierania pokoi:', err)
-    });
-}, []);
+   
 
 
     return (

@@ -1,72 +1,18 @@
-import { useState } from "react";
+
+import { useRooms } from "../contexts/RoomsContext";
 
 function RoomListAdmin() {
 
-    const [rooms, setRooms] = useState([]);
-    const [editedRoom, setEditedRoom] = useState({
-        name: '',
-        capacity: ""
-    })
-    const [editingRoom, setEditingRoom] = useState(null)
 
-    const fetchRooms = () => {
-    fetch('http://localhost:8080/rooms')
-            .then((res) => res.json())
-            .then((data) => setRooms(data)
-    )
-    .catch((err) => {
-        console.log('Błąd podczas pobierania pokoi:', err)
-    });
-    }
+    const {rooms, deleteRoom, setEditingRoom, editRoom, updateRoom, editingRoom, editedRoom, setEditedRoom} = useRooms();
+
+    
+    
 
     const handleChange = (e) => {
         console.log(e.target.name)
         setEditedRoom({ ...editedRoom, [e.target.name]: e.target.value});
     };
-
-    const deleteRoom = (id) => {
-        fetch(`http://localhost:8080/rooms/${id}`, {
-            method: "DELETE",
-            headers: {
-                'X-Role': localStorage.getItem('role') || 'USER'
-            }
-        })
-        .then(() => setRooms(rooms.filter(r => r.id != id)))
-        .catch(err => console.log*('Błąd usuwania:', err))
-    }
-
-
-    const editRoom = (id, roomName, roomCapacity) => {
-        setEditingRoom(id)
-        setEditedRoom({
-            name: roomName,
-            capacity: roomCapacity
-        })
-    }
-
-    const submitEditRoom = async () => {
-        if (!editedRoom.name.trim() || !editedRoom.capacity) {
-            alert("Wszystkie pola muszą być wypełnione.");
-            return;
-        }
-        try {
-            const res = await fetch(`http://localhost:8080/rooms/${editingRoom}`, {
-            method: "PUT",
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Role': localStorage.getItem('role')
-            },
-            body: JSON.stringify(editedRoom),
-            })
-        if (!res.ok) throw new Error('Błąd aktualizacji');
-        alert('Pokój zaktualizowany');
-        setEditingRoom(null);
-        } catch (err) {
-            console.log(err);
-        }
-        fetchRooms()
-    }
-    fetchRooms()
 
 
     return (
@@ -93,7 +39,7 @@ function RoomListAdmin() {
                             min={1}
                         />
                         <div className="flex justify-end gap-2">
-                            <button onClick={() => submitEditRoom()} className="bg-blue-500 text-white px-4 py-2 rounded">Zapisz</button>
+                            <button onClick={() => updateRoom(editingRoom, editedRoom)} className="bg-blue-500 text-white px-4 py-2 rounded">Zapisz</button>
                             <button onClick={() => setEditingRoom(null)} className="bg-gray-300 px-4 py-2 rounded">Anuluj</button>
                         </div>
                     </div>
