@@ -1,25 +1,19 @@
-import { useEffect, useState } from "react"
+import { useReservations } from "../contexts/ReservationsContext";
 
 function ReservationList ({isAdmin}) {
-    const [reservations, setReservations] = useState([])
+    
+    const {reservations, deleteReservation} = useReservations()
 
-    useEffect(() => {
-        fetch("http://localhost:8080/reservations")
-            .then(res => res.json())
-            .then(data => setReservations(data))
-            .catch(err => console.log('Błąd pobierania rezerwacji', err))      
-    }, [])
-
-    const deleteReservation = (id) => {
-        fetch(`http://localhost:8080/reservations/${id}`, {
-            method: "DELETE",
-            headers: {
-                'X-Role': localStorage.getItem('role') || 'USER'
-            }
-        })
-        .then(() => setReservations(reservations.filter(r => r.id !== id)))
-        .catch(err => console.log*('Błąd usuwania:', err))
-    };
+    // const deleteReservation = (id) => {
+    //     fetch(`http://localhost:8080/reservations/${id}`, {
+    //         method: "DELETE",
+    //         headers: {
+    //             'X-Role': localStorage.getItem('role') || 'USER'
+    //         }
+    //     })
+    //     .then(() => setReservations(reservations.filter(r => r.id !== id)))
+    //     .catch(err => console.log*('Błąd usuwania:', err))
+    // };
 
     return (
         <div className="bg-white p-4 rounded shadow mt-4">

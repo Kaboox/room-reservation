@@ -1,56 +1,21 @@
-import { useEffect, useState } from "react";
+import { useRooms } from "../contexts/RoomsContext";
+import { useReservations } from "../contexts/ReservationsContext";
 function ReservationForm() {
 
-    const [formData, setFormData] = useState({
-        roomId: '',
-        startDate: '',
-        endDate: '',
-        clientName: '',
-    });
-
-    const [status, setStatus] = useState('');
-    const [rooms, setRooms] = useState([]);
-
-    useEffect(() => {
-        fetch('http://localhost:8080/rooms')
-            .then(res => res.json())
-            .then(data => setRooms(data))
-            .catch(err => console.log('Błąd pobierania pokoi:', err))
-    }, [])
+    const {rooms} = useRooms()
+    const {addReservation, formData, setFormData, status} = useReservations();
 
     const handleChange = (e) => {
         setFormData({...formData, [e.target.name]: e.target.value})
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setStatus('Wysylanie...');
-
-        try {
-            const res = await fetch('http://localhost:8080/reservations', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            if (!res.ok) throw new Error('Błąd zapisu do bazy danych');
-            //const data = await res.json();
-            setStatus('Zarezerwowano pomyślnie!');
-            //console.log('Opodiwedź z backendu:', data);
-        } catch (error) {
-            setStatus('Błąd rezerwacji');
-            console.log(error);
-        }
-    };
-
-    
-
     return (
         <div>
             <h2>Make a reservation</h2>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <form onSubmit={(e) => {
+                e.preventDefault();
+                addReservation(formData)
+            }} className="flex flex-col gap-4">
                 <select 
                     name="roomId"
                     value={formData.roomId}

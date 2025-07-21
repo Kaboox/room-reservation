@@ -58,8 +58,8 @@ public class ReservationController {
             }
         }
         
-        reservationRepository.save(reservation);
-        return ResponseEntity.ok("Rezerwacja zapisana pomyślnie");
+        Reservation saved = reservationRepository.save(reservation);
+        return ResponseEntity.ok(saved);
     }
 
     @DeleteMapping("/{id}")
