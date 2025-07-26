@@ -32,7 +32,7 @@ export function RoomsProvider({children}) {
             await fetch(`http://localhost:8080/rooms/${id}`, {
                 method: "DELETE",
                 headers: {
-                     "X-Role": localStorage.getItem("role") || "USER"
+                     Authorization: `Bearer ${token}`,
                 }
             });
             setRooms((prev) => prev.filter((room) => room.id !== id));
@@ -59,7 +59,7 @@ export function RoomsProvider({children}) {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json',
-                'X-Role': localStorage.getItem('role')
+                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(roomData),
             })
