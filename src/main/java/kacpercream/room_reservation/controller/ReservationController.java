@@ -8,6 +8,7 @@ import kacpercream.room_reservation.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -63,18 +64,20 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteReservation(@PathVariable Long id, @RequestHeader("X-Role") String role) {
+    public ResponseEntity<?> deleteReservation(@PathVariable Long id, Authentication authentication) {
+        // Sprawdź, czy użytkownik ma rolę ADMIN
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
-        if (!"ADMIN".equals(role)) {
+        if (!isAdmin) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body("Brak uprawnień do usuwania");
         }
 
-
-
         if (!reservationRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
+
         reservationRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }

@@ -5,6 +5,7 @@ import kacpercream.room_reservation.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,11 +54,15 @@ public class RoomController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateRoom(@PathVariable Long id, @RequestHeader("X-Role") String role, @RequestBody Room updatedRoom) {
-        if (!"ADMIN".equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Brak uprawnień");
-        }
+    public ResponseEntity<?> updateRoom(@PathVariable Long id, Authentication authentication, @RequestBody Room updatedRoom) {
+        // Sprawdź, czy użytkownik ma rolę ADMIN
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
+        if (!isAdmin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Brak uprawnień do usuwania");
+        }
 
         return roomRepository.findById(id)
                 .map(existingRoom -> {
