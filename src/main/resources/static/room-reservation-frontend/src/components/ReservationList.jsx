@@ -4,17 +4,6 @@ function ReservationList ({isAdmin}) {
     
     const {reservations, deleteReservation} = useReservations()
 
-    // const deleteReservation = (id) => {
-    //     fetch(`http://localhost:8080/reservations/${id}`, {
-    //         method: "DELETE",
-    //         headers: {
-    //             'X-Role': localStorage.getItem('role') || 'USER'
-    //         }
-    //     })
-    //     .then(() => setReservations(reservations.filter(r => r.id !== id)))
-    //     .catch(err => console.log*('Błąd usuwania:', err))
-    // };
-
     return (
         <div className="bg-white p-4 rounded shadow mt-4">
             <h2 className="text-xl font-bold mb-4">Lista Rezerwacji</h2>

@@ -1,9 +1,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "./AuthContext";
 
 const RoomsContext = createContext();
 
 // provider
 export function RoomsProvider({children}) {
+    const {token} = useAuth()
     const [rooms, setRooms] = useState([]);
     const [editedRoom, setEditedRoom] = useState({
         name: '',
@@ -14,14 +16,16 @@ export function RoomsProvider({children}) {
 
 
     useEffect(() => {
-        fetch("http://localhost:8080/rooms")
-            .then(res => {
-                if (!res.ok) throw new Error("HTTP error");
-                return res.json()
-            })
+        fetch("http://localhost:8080/rooms", {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then(res => res.json())
             .then(data => setRooms(data))
             .catch(err => console.log("Fetch error:", err))
-    }, []);
+    }, [token])
 
     const deleteRoom = async (id) => {
         try {

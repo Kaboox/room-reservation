@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { useContext } from "react";
+import { useAuth } from "./AuthContext";
 
 
 
@@ -8,6 +9,8 @@ const ReservationsContext = createContext();
 export function ReservationsProvider({children}) {
 
     const [reservations, setReservations] = useState([])
+
+    const { token } = useAuth();
 
     const [formData, setFormData] = useState({
         roomId: '',
@@ -19,18 +22,24 @@ export function ReservationsProvider({children}) {
     const [status, setStatus] = useState('');
 
      useEffect(() => {
-        fetch("http://localhost:8080/reservations")
+        fetch("http://localhost:8080/reservations", {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        })
             .then(res => res.json())
             .then(data => setReservations(data))
             .catch(err => console.log('Błąd pobierania rezerwacji', err))      
-    }, [])
+    }, [token])
 
     const addReservation = async () => {
         try {
             const res = await fetch('http://localhost:8080/reservations', {
                 method: "POST",
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(formData)
             });
@@ -54,7 +63,7 @@ export function ReservationsProvider({children}) {
         fetch(`http://localhost:8080/reservations/${id}`, {
             method: "DELETE",
             headers: {
-                'X-Role': localStorage.getItem('role') || 'USER'
+                 "Authorization": `Bearer ${token}`,
             }
         })
         .then(() => setReservations(reservations.filter(r => r.id !== id)))

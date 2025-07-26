@@ -11,7 +11,7 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    private static final String SECRET = "secret_key";
+    private static final String SECRET = "ultra_secret_extremely_unordinary_key";
     private static final long EXPIRATION = 1000 * 60 * 60 * 10; // 10h
 
     public String extractUsername(String token) {
@@ -26,7 +26,7 @@ public class JwtService {
         return Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(SECRET.getBytes()))
                 .build()
-                .parseClaimsJwt(token)
+                .parseClaimsJws(token)
                 .getBody();
     }
 

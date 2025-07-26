@@ -1,11 +1,9 @@
 package kacpercream.room_reservation.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name="users")
 public class User {
 
     @Id
@@ -14,7 +12,7 @@ public class User {
 
     private String username;
     private String password;
-    private String role; // USER / ADMIN
+    private String role;
 
     public Long getId() {
         return id;
