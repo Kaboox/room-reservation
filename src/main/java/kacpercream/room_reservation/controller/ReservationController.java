@@ -1,5 +1,6 @@
 package kacpercream.room_reservation.controller;
 
+import jakarta.validation.Valid;
 import kacpercream.room_reservation.ReservationDto;
 import kacpercream.room_reservation.model.Reservation;
 import kacpercream.room_reservation.model.Room;
@@ -9,20 +10,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/reservations")
 public class ReservationController {
 
     @Autowired
-    private ReservationRepository reservationRepository;
+    ReservationRepository reservationRepository;
 
     @Autowired
-    private RoomRepository roomRepository;
+    RoomRepository roomRepository;
 
     @GetMapping
     public List<Reservation> getAllReservations() {
@@ -30,7 +33,14 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createReservation(@RequestBody ReservationDto dto) {
+    public ResponseEntity<?> createReservation(@RequestBody @Valid ReservationDto dto, BindingResult result) {
+        if (result.hasErrors()) {
+            String errorMsg = result.getFieldErrors().stream()
+                    .map(e -> e.getField() + ": " + e.getDefaultMessage())
+                    .collect(Collectors.joining(", "));
+            return ResponseEntity.badRequest().body(errorMsg);
+        }
+
         Optional<Room> optionalRoom = roomRepository.findById(dto.getRoomId());
         if (optionalRoom.isEmpty()) {
             return ResponseEntity.badRequest().body("Pokój o ID " + dto.getRoomId() + " nie istnieje");
@@ -38,26 +48,27 @@ public class ReservationController {
 
         Room room = optionalRoom.get();
 
-        Reservation reservation = new Reservation();
-        reservation.setRoom(room);
-        reservation.setStartDate(dto.getStartDate());
-        reservation.setEndDate(dto.getEndDate());
-        reservation.setClientName(dto.getClientName());
 
         if(dto.getEndDate().isBefore(dto.getStartDate())) {
             return ResponseEntity.badRequest().body("Data zakończenia musi być po dacie rozpoczęcia");
         }
 
         // check if the room is available - collision
-        List<Reservation> reservations = reservationRepository.findByRoom_Id(reservation.getRoom().getId());
-        for (Reservation reservation_in_database: reservations) {
-            // check availability
-            if (!(reservation.getEndDate().isBefore(reservation_in_database.getStartDate())) && !(reservation.getStartDate().isAfter(reservation_in_database.getEndDate()))) {
-                return ResponseEntity.badRequest().body("Pokój jest już zarezerwowany w tym terminie: " +
-                        reservation_in_database.getStartDate() + " - " + reservation_in_database.getEndDate());
-
+        List<Reservation> reservations = reservationRepository.findByRoom_Id(room.getId());
+        for (Reservation existing : reservations) {
+            if (!(dto.getEndDate().isBefore(existing.getStartDate())) &&
+                    !(dto.getStartDate().isAfter(existing.getEndDate()))) {
+                return ResponseEntity.badRequest().body(
+                        "Pokój jest już zarezerwowany w tym terminie: " +
+                                existing.getStartDate() + " - " + existing.getEndDate());
             }
         }
+
+        Reservation reservation = new Reservation();
+        reservation.setRoom(room);
+        reservation.setStartDate(dto.getStartDate());
+        reservation.setEndDate(dto.getEndDate());
+        reservation.setClientName(dto.getClientName());
         
         Reservation saved = reservationRepository.save(reservation);
         return ResponseEntity.ok(saved);
@@ -65,7 +76,6 @@ public class ReservationController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteReservation(@PathVariable Long id, Authentication authentication) {
-        // Sprawdź, czy użytkownik ma rolę ADMIN
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
