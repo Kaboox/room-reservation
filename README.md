@@ -17,57 +17,17 @@ Automatic Data Seeding: The application automatically seeds the database on star
 💻 Tech Stack
 
 Backend
-
-Technology
-
-Description
-
 Java
-
-Core backend language.
-
 Spring Boot
-
-Framework for building the REST API.
-
 Spring Security
 
-Handling authentication (JWT) and authorization.
-
-PostgreSQL
-
 Primary relational database.
-
+PostgreSQL
 Spring Data JPA
 
-For data persistence and repository management.
-
-Maven
-
-Dependency management.
-
 Frontend
-
-Technology
-
-Description
-
 React.js
-
-Core UI library for building the single-page application.
-
-(React Router)
-
-For client-side navigation.
-
-(Axios)
-
-For making HTTP requests to the backend API.
-
 (CSS/Tailwind)
-
-For styling the user interface.
-
 🛠️ How to Run Locally
 
 Prerequisites
@@ -112,20 +72,10 @@ The React application will be available at http://localhost:5173 (lub na porcie,
 
 The application automatically seeds the database (DataInitializer.java) with the following test accounts upon startup:
 
-Username
+User
+Username - testuser
+Password - password123
 
-Password
-
-Role
-
-testuser
-
-password123
-
-ROLE_USER
-
-admin
-
-admin123
-
-`ROLE_
+Admin 
+Username - admin
+Password - admin123
