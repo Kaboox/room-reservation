@@ -15,7 +15,7 @@ public class Room {
     private int capacity;
 
 
-    // gettery settery
+
     public Long getId() {
         return id;
     }

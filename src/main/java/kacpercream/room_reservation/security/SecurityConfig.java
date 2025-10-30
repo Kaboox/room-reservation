@@ -15,8 +15,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import static org.springframework.security.config.Customizer.withDefaults;
+import java.util.Arrays;
+import java.util.List;
+
+// import static org.springframework.security.config.Customizer.withDefaults; // Już niepotrzebne
 
 
 @Configuration
@@ -35,17 +41,39 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(withDefaults()) // <- to dodaj
+                // 1. Mówimy Spring Security, aby użyło CorsConfigurationSource zdefiniowanego poniżej
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Umożliwiamy dostęp do ścieżek logowania/rejestracji
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/rooms/**", "/reservations/**").authenticated()
-                        .anyRequest().permitAll()
+                        // Cała reszta wymaga autoryzacji
+                        .anyRequest().authenticated()
                 )
+                .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
+    /**
+     * --- DODANY BEAN KONFIGURACJI CORS ---
+     * To zastępuje Twój plik WebConfig.java
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        // Upewnij się, że ten port (5173) jest poprawny dla Twojego Reacta
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // Stosuj tę konfigurację do wszystkich ścieżek
+        return source;
+    }
+
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -66,3 +94,4 @@ public class SecurityConfig {
     }
 
 }
+

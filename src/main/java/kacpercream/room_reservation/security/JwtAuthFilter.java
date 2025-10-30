@@ -51,4 +51,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * --- DODANA METODA ---
+     * Mówi filtrowi, aby NIE uruchamiał się (should NOT filter),
+     * jeśli ścieżka żądania (ServletPath) pasuje do ścieżek publicznych.
+     */
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        // Nie uruchamiaj tego filtra (zwróć 'true'), jeśli ścieżka zaczyna się od "/auth/"
+        return request.getServletPath().startsWith("/auth/");
+    }
 }

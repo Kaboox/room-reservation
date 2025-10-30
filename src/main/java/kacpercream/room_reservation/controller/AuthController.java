@@ -44,7 +44,7 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userRepository.save(user);
-        return "Zarejestrowano pomyślnie";
+        return "Register successful";
     }
 
 }

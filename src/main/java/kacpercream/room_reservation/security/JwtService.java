@@ -3,6 +3,7 @@ package kacpercream.room_reservation.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -11,7 +12,8 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    private static final String SECRET = "ultra_secret_extremely_unordinary_key";
+    @Value("${jwt.secret.key}")
+    private String SECRET;
     private static final long EXPIRATION = 1000 * 60 * 60 * 10; // 10h
 
     public String extractUsername(String token) {

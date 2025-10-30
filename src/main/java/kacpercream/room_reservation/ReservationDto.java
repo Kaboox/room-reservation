@@ -11,23 +11,23 @@ import java.time.LocalDateTime;
 
 public class ReservationDto {
 
-    @NotNull(message = "Pokój musi być wybrany")
+    @NotNull(message = "Room must be chosen")
     private Long roomId;
 
-    @NotNull(message = "Data rozpoczęcia nie może być pusta")
-    @FutureOrPresent(message = "Data rozpoczęcia nie może być z przeszłości")
+    @NotNull(message = "Start date can't be none")
+    @FutureOrPresent(message = "Start date can't be future")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    @NotNull(message = "Data zakończenia nie może być pusta")
-    @Future(message = "Data zakończenia musi być z przyszłości")
+    @NotNull(message = "End date can't be none")
+    @Future(message = "End date must be future")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
-    @NotBlank(message = "Imię klienta nie może być puste")
+    @NotBlank(message = "Client's name can't be none")
     private String clientName;
 
-    // gettery i settery
+
     public Long getRoomId() {
         return roomId;
     }

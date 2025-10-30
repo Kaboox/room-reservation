@@ -7,7 +7,7 @@ export function AuthProvider({children}) {
     const [role, setRole] = useState(localStorage.getItem("role") || "");
 
     const login = async (username, password) => {
-        const res = await fetch("htpp://localhost:8080/auth/login", {
+        const res = await fetch("http://localhost:8080/auth/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -18,7 +18,7 @@ export function AuthProvider({children}) {
         if (!res.ok) throw new Error("Nieprawidłowe dane logowania");
 
         const data = await res.json();
-        localStorage.setItem("tolen", data.token);
+        localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
         setToken(data.token);
         setRole(data.role);

@@ -27,11 +27,11 @@ public class RoomController {
     public ResponseEntity<?> createRoom(@RequestBody Room room, @RequestHeader("X-Role") String role) {
 
         if (room.getName() == null || room.getName().isBlank() || room.getCapacity() <= 0) {
-            return ResponseEntity.badRequest().body("Nieprawidlowe dane");
+            return ResponseEntity.badRequest().body("Wrong data");
         }
 
         if (!role.equals("ADMIN")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Brak dostępu");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
         }
 
         Room savedRoom = roomRepository.save(room);
@@ -42,7 +42,7 @@ public class RoomController {
     public ResponseEntity<?> deleteRoom(@PathVariable Long id, @RequestHeader("X-Role") String role) {
 
         if (!"ADMIN".equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Brak uprawnień");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Not authorized");
         }
 
         if (!roomRepository.existsById(id)) {
@@ -50,18 +50,18 @@ public class RoomController {
         }
 
         roomRepository.deleteById(id);
-        return ResponseEntity.ok("Usunięto pokój");
+        return ResponseEntity.ok("Room deleted");
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateRoom(@PathVariable Long id, Authentication authentication, @RequestBody Room updatedRoom) {
-        // Sprawdź, czy użytkownik ma rolę ADMIN
+        // Check if user is Admin
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
         if (!isAdmin) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("Brak uprawnień do usuwania");
+                    .body("Not authorized");
         }
 
         return roomRepository.findById(id)
@@ -75,7 +75,7 @@ public class RoomController {
                     }
 
                     roomRepository.save(existingRoom);
-                    return ResponseEntity.ok("Pokój zaktualizowany");
+                    return ResponseEntity.ok("Room updated");
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

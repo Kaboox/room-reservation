@@ -3,7 +3,6 @@ package kacpercream.room_reservation.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 public class Reservation {
@@ -20,7 +19,7 @@ public class Reservation {
     @JoinColumn(name = "room_id")
     private Room room;
 
-    // Gettery i settery
+
 
     public Long getId() {
         return id;
@@ -30,7 +29,7 @@ public class Reservation {
         this.id = id;
     }
 
-    public String getCLientName() {
+    public String getClientName() {
         return clientName;
     }
 

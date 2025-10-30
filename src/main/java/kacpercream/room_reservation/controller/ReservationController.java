@@ -43,14 +43,14 @@ public class ReservationController {
 
         Optional<Room> optionalRoom = roomRepository.findById(dto.getRoomId());
         if (optionalRoom.isEmpty()) {
-            return ResponseEntity.badRequest().body("Pokój o ID " + dto.getRoomId() + " nie istnieje");
+            return ResponseEntity.badRequest().body("Room with ID " + dto.getRoomId() + " doesn't exist");
         }
 
         Room room = optionalRoom.get();
 
 
         if(dto.getEndDate().isBefore(dto.getStartDate())) {
-            return ResponseEntity.badRequest().body("Data zakończenia musi być po dacie rozpoczęcia");
+            return ResponseEntity.badRequest().body("End date must be after Start date");
         }
 
         // check if the room is available - collision
@@ -59,7 +59,7 @@ public class ReservationController {
             if (!(dto.getEndDate().isBefore(existing.getStartDate())) &&
                     !(dto.getStartDate().isAfter(existing.getEndDate()))) {
                 return ResponseEntity.badRequest().body(
-                        "Pokój jest już zarezerwowany w tym terminie: " +
+                        "Room is already reserved in this date: " +
                                 existing.getStartDate() + " - " + existing.getEndDate());
             }
         }
@@ -81,7 +81,7 @@ public class ReservationController {
 
         if (!isAdmin) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("Brak uprawnień do usuwania");
+                    .body("Not authorized");
         }
 
         if (!reservationRepository.existsById(id)) {
