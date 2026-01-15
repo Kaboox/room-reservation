@@ -1,4 +1,4 @@
-Room Reservation - Full Stack Applicationn
+Room Reservation - Full Stack Applicationnnn
 
 This is a complete full-stack web application that provides a system for managing and booking rooms. The project demonstrates a secure, decoupled architecture using a Java/Spring Boot backend API and a React.js frontend.
 
