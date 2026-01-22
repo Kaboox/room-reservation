@@ -2,9 +2,9 @@ name: CI - Build & Test
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master", "main" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master", "main" ]
 
 jobs:
   # --- BACKEND (JAVA) ---
@@ -41,7 +41,6 @@ jobs:
       with:
         node-version: '20'
         cache: 'npm'
-        # Wskazujemy, gdzie szukać pliku lock do cache'owania
         cache-dependency-path: './src/main/resources/static/room-reservation-frontend/package-lock.json'
 
     - name: Instalacja zależności
