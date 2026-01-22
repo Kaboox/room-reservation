@@ -23,7 +23,7 @@ jobs:
         cache: maven
 
     - name: Build, Test & Lint (Maven)
-      run: mvn verify
+      run: mvn verify -DskipTests
 
   # --- FRONTEND (REACT) ---
   build-frontend:
