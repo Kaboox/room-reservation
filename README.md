@@ -68,6 +68,22 @@ Start the client: npm start (or npm run dev if you use Vite)
 
 The React application will be available at http://localhost:5173 (lub na porcie, na którym go uruchamiasz).
 
+📊 Monitoring & Infrastructure (Docker)
+
+This project has been enhanced with a containerized infrastructure and a professional monitoring stack.
+
+Implemented Changes:
+- Dockerized Database: Moved PostgreSQL to a Docker container (docker-compose.yml) for environment consistency.
+- Spring Boot Actuator: Enabled and secured service health and metric endpoints.
+- Prometheus Integration: Configured Prometheus to scrape real-time metrics (JVM, CPU, HTTP).
+- Grafana Visualization: Integrated a Spring Boot dashboard (ID: 11378) for performance monitoring.
+- Security Bypass: Configured SecurityConfig.java to allow access to /actuator/** for monitoring tools.
+
+How to Access Monitoring:
+- Grafana: http://localhost:3000 (admin / admin)
+- Prometheus: http://localhost:9090
+- Metrics Feed: http://localhost:8080/actuator/prometheus
+  
 🔑 Test Credentials
 
 The application automatically seeds the database (DataInitializer.java) with the following test accounts upon startup:
