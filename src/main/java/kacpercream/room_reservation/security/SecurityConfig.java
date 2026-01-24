@@ -48,6 +48,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Umożliwiamy dostęp do ścieżek logowania/rejestracji
                         .requestMatchers("/auth/**").permitAll()
+                        // --- DODANA LINIA: Dostęp do metryk monitoringu bez tokena ---
+                        .requestMatchers("/actuator/**").permitAll()
                         // Cała reszta wymaga autoryzacji
                         .anyRequest().authenticated()
                 )
