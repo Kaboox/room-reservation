@@ -22,9 +22,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
 
-// import static org.springframework.security.config.Customizer.withDefaults; // Już niepotrzebne
-
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -39,43 +36,40 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Mówimy Spring Security, aby użyło CorsConfigurationSource zdefiniowanego poniżej
+                // 1. Włączamy CORS z naszej konfiguracji poniżej
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // 2. Wyłączamy CSRF (standard przy JWT)
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // 3. Konfiguracja dostępów
                 .authorizeHttpRequests(auth -> auth
-                        // Umożliwiamy dostęp do ścieżek logowania/rejestracji
-                        .requestMatchers("/auth/**").permitAll()
-                        // --- DODANA LINIA: Dostęp do metryk monitoringu bez tokena ---
                         .requestMatchers("/actuator/**").permitAll()
-                        // Cała reszta wymaga autoryzacji
+                        .requestMatchers("/auth/**", "/api/auth/**").permitAll() // Dodane oba warianty dla Reacta
                         .anyRequest().authenticated()
                 )
+                // 4. Sesja bezstanowa (Stateful -> Stateless)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // 5. Rejestracja providera i filtra JWT
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
-    /**
-     * --- DODANY BEAN KONFIGURACJI CORS ---
-     * To zastępuje Twój plik WebConfig.java
-     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Upewnij się, że ten port (5173) jest poprawny dla Twojego Reacta
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        // Port 3001 - tak jak masz w docker-compose
+        configuration.setAllowedOrigins(List.of("http://localhost:3001"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Stosuj tę konfigurację do wszystkich ścieżek
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -94,6 +88,4 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }
-
