@@ -3,7 +3,7 @@ name: CD - Publish Docker Images
 on:
   push:
     tags:
-      - 'v*' # Uruchom tylko jak tag zaczyna się od "v", np. v1.0.0
+      - 'v*'
 
 jobs:
   build-and-push:
@@ -11,6 +11,16 @@ jobs:
     steps:
       - name: Pobranie kodu (Checkout)
         uses: actions/checkout@v4
+
+      - name: Konfiguracja Javy (Potrzebne do zbudowania .jar)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Budowanie pliku JAR
+        run: mvn clean package -DskipTests
 
       - name: Logowanie do Docker Hub
         uses: docker/login-action@v3
@@ -26,7 +36,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile.ngrok.frontend.backend.backend.backend
+          file: ./Dockerfile.backend
           push: true
           tags: |
             kabox/room-reservation-backend:latest
@@ -36,9 +46,9 @@ jobs:
       - name: Build and push Frontend
         uses: docker/build-push-action@v5
         with:
-          context: ./src/main/resources/static/room-reservation-frontend
-          file: ./Dockerfile.ngrok.frontend.backend.backend.frontend
+          context: .
+          file: ./Dockerfile.frontend
           push: true
           tags: |
-            TWOJ_LOGIN_DOCKER/room-reservation-frontend:latest
-            TWOJ_LOGIN_DOCKER/room-reservation-frontend:${{ github.ref_name }}
+            kabox/room-reservation-frontend:latest
+            kabox/room-reservation-frontend:${{ github.ref_name }}
