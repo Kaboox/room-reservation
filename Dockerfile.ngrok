@@ -1,0 +1,5 @@
+FROM wernight/ngrok
+
+# Domyślny tunel HTTP do backendu
+ENTRYPOINT ["ngrok"]
+CMD ["http", "-host-header=rewrite", "backend:8080"]

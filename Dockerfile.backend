@@ -1,0 +1,33 @@
+# =========================
+# BUILD STAGE
+# =========================
+FROM maven:3.9.6-eclipse-temurin-17 AS build
+WORKDIR /app
+
+# 1️⃣ najpierw pliki do cache
+COPY pom.xml .
+COPY .mvn .mvn
+COPY mvnw .
+
+RUN ./mvnw dependency:go-offline -B
+
+# 2️⃣ dopiero kod
+COPY src ./src
+
+RUN ./mvnw clean package -DskipTests
+
+# =========================
+# RUNTIME STAGE
+# =========================
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+
+# 3️⃣ kopiujemy tylko JAR
+COPY --from=build /app/target/*.jar app.jar
+
+# 4️⃣ bezpieczeństwo
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring
+
+EXPOSE 8081
+ENTRYPOINT ["java","-jar","app.jar"]
