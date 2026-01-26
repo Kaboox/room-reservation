@@ -9,10 +9,10 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
-      - name: Pobranie kodu (Checkout)
+      - name: Pobranie kodu
         uses: actions/checkout@v4
 
-      - name: Konfiguracja Javy (Potrzebne do zbudowania .jar)
+      - name: Konfiguracja Javy
         uses: actions/setup-java@v4
         with:
           java-version: '17'
@@ -31,7 +31,6 @@ jobs:
       - name: Konfiguracja Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # --- BACKEND ---
       - name: Build and push Backend
         uses: docker/build-push-action@v5
         with:
@@ -42,7 +41,6 @@ jobs:
             kabox/room-reservation-backend:latest
             kabox/room-reservation-backend:${{ github.ref_name }}
 
-      # --- FRONTEND ---
       - name: Build and push Frontend
         uses: docker/build-push-action@v5
         with:
