@@ -1,5 +1,5 @@
 services:
-  # Baza danych PostgreSQL (zamiast tej lokalnej, do której nie masz hasła)
+
   db:
     image: postgres:15
     container_name: room_reservation_db
@@ -9,8 +9,33 @@ services:
       POSTGRES_PASSWORD: password123
     ports:
       - "5432:5432"
+    volumes:
+      - room_reservation_db:/var/lib/postgresql/data
 
-  # Prometheus - zbiera metryki z Twojej aplikacji
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: room_reservation_backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/room_reservation
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password123
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: room_reservation_frontend
+    ports:
+      - "3001:80"
+    depends_on:
+      - backend
+
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -18,12 +43,19 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
+    depends_on:
+      - backend
 
-  # Grafana - rysuje ładne wykresy
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
-      - "3000:3000"
+      - "3000:3000"   # ⚠️ zmiana portu, bo frontend używa 3000
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    depends_on:
+      - prometheus
+
+volumes:
+  room_reservation_db:
