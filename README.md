@@ -66,7 +66,7 @@ Install dependencies: npm install
 
 Start the client: npm start (or npm run dev if you use Vite)
 
-The React application will be available at http://localhost:5173 (lub na porcie, na którym go uruchamiamy).
+The React application will be available at http://localhost:5173 (lub na porcie, na którym go uruchamiasz).
 
 📊 Monitoring & Infrastructure (Docker)
 
